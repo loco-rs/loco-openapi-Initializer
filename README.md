@@ -20,7 +20,7 @@ Add the `loco-openapi` initializer, with one or multiple of the following featur
 [dependencies]
 loco-openapi = { version = "*", features = [
     "full",
-], git = "https://github.com/NexVeridian/loco-openapi", branch = "initializer" }
+], git = "https://github.com/loco-rs/loco-openapi-Initializer", branch = "master" }
 ```
 
 ## Configuration
@@ -50,7 +50,7 @@ In the initializer you can modify the OpenAPI spec before the routes are added, 
 // src/app.rs
 use loco_openapi::prelude::*;
 
-async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     Ok(vec![Box::new(
         loco_openapi::OpenapiInitializerWithSetup::new(
             |ctx| {
@@ -144,7 +144,7 @@ Then in the initializer, create a `Vec<OpenApiRouter<AppContext>>`
 ```rust
 use loco_openapi::prelude::*;
 
-async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
     Ok(vec![Box::new(
         loco_openapi::OpenapiInitializerWithSetup::new(
             |ctx| {

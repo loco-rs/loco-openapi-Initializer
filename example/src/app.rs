@@ -42,7 +42,7 @@ impl Hooks for App {
         create_app::<Self, Migrator>(mode, environment, config).await
     }
 
-    async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+    async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
         Ok(vec![Box::new(
             loco_openapi::OpenapiInitializerWithSetup::new(
                 |ctx| {
