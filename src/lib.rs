@@ -23,17 +23,16 @@ pub mod utils;
 type RouterList = Option<Vec<OpenApiRouter<AppContext>>>;
 type InitialSpec = dyn Fn(&AppContext) -> OpenApi + Send + Sync + 'static;
 
-/// Loco initializer for OpenAPI with custom initial spec setup
+/// Loco initializer for `OpenAPI` with custom initial spec setup
 #[derive(Default)]
 pub struct OpenapiInitializerWithSetup {
-    /// Custom setup for the initial OpenAPI spec, if any
+    /// Custom setup for the initial `OpenAPI` spec, if any
     initial_spec: Option<Box<InitialSpec>>,
-    /// Routes to add to the OpenAPI spec
+    /// Routes to add to the `OpenAPI` spec
     routes_setup: RouterList,
 }
 
 impl OpenapiInitializerWithSetup {
-    #[inline(always)]
     #[must_use]
     pub fn new<F>(initial_spec: F, routes_setup: RouterList) -> Self
     where
@@ -55,12 +54,12 @@ impl Initializer for OpenapiInitializerWithSetup {
     async fn after_routes(&self, mut router: AxumRouter, ctx: &AppContext) -> Result<AxumRouter> {
         set_openapi_config(ctx)?;
 
-        let mut api_router: OpenApiRouter<AppContext> =
-            if let Some(ref custom_spec_fn) = self.initial_spec {
+        let mut api_router: OpenApiRouter<AppContext> = self
+            .initial_spec
+            .as_ref()
+            .map_or_else(OpenApiRouter::new, |custom_spec_fn| {
                 OpenApiRouter::with_openapi(custom_spec_fn(ctx))
-            } else {
-                OpenApiRouter::new()
-            };
+            });
 
         // Merge all manually collected routes
         if let Some(ref routes_setup) = self.routes_setup {
@@ -72,17 +71,15 @@ impl Initializer for OpenapiInitializerWithSetup {
         // Merge all automatically collected routes
         api_router = api_router.merge(get_merged_router());
 
-        // Collect the OpenAPI spec
+        // Collect the `OpenAPI` spec
         let (_, open_api_spec) = api_router.split_for_parts();
         set_openapi_spec(open_api_spec);
 
-        let open_api_config = if let Some(open_api_config) = get_openapi_config() {
-            open_api_config
-        } else {
+        let Some(open_api_config) = get_openapi_config() else {
             return Ok(router);
         };
 
-        // Serve the OpenAPI spec using the enabled OpenAPI visualizers
+        // Serve the `OpenAPI` spec using the enabled `OpenAPI` visualizers
         #[cfg(feature = "redoc")]
         if let Some(OpenAPIType::Redoc {
             url,

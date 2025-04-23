@@ -16,6 +16,7 @@ pub fn add_route(route: OpenApiRouter<AppContext>) {
 }
 
 // Get a merged router containing all collected routes
+#[must_use]
 pub fn get_merged_router() -> OpenApiRouter<AppContext> {
     let mut result = OpenApiRouter::new();
 

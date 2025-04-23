@@ -11,16 +11,27 @@ pub fn set_openapi_spec(api: OpenApi) -> &'static OpenApi {
     OPENAPI_SPEC.get_or_init(|| api)
 }
 
+/// # Panics
+///
+/// Will panic if `OpenAPI` spec fails to build
 pub fn get_openapi_spec() -> &'static OpenApi {
     OPENAPI_SPEC.get().unwrap()
 }
 
 /// Axum handler that returns the `OpenAPI` spec as JSON
+///
+/// # Errors
+/// Currently this function doesn't return any error. this is for feature
+/// functionality
 pub async fn openapi_spec_json() -> Result<Response> {
     format::json(get_openapi_spec())
 }
 
 /// Axum handler that returns the `OpenAPI` spec as YAML
+///
+/// # Errors
+/// Currently this function doesn't return any error. this is for feature
+/// functionality
 pub async fn openapi_spec_yaml() -> Result<Response> {
     format::yaml(&get_openapi_spec().to_yaml()?)
 }

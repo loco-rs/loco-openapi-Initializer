@@ -5,6 +5,9 @@ use serde::{Deserialize, Serialize};
 
 static OPENAPI_CONFIG: OnceLock<Option<OpenAPIConfig>> = OnceLock::new();
 
+/// # Errors
+///
+/// Will return `Err` if initializers: openapi: is not set in config/*.yaml
 pub fn set_openapi_config(ctx: &AppContext) -> Result<Option<&OpenAPIConfig>, Error> {
     let json = ctx
         .config
