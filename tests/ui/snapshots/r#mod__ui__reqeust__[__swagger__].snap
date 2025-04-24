@@ -1,0 +1,8 @@
+---
+source: tests/ui/reqeust.rs
+expression: "(res.status_code(),\nres.text().lines().find(|line|\nline.contains(\"<title>\")).and_then(|line|\n{\n    line.split(\"<title>\").nth(1)?.split(\"</title>\").next()\n}).unwrap_or_default().to_string(),)"
+---
+(
+    200,
+    "Swagger UI",
+)

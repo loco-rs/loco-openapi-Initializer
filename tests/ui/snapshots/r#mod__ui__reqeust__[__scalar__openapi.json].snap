@@ -1,0 +1,73 @@
+---
+source: tests/ui/reqeust.rs
+expression: json_value
+---
+{
+  "components": {
+    "schemas": {
+      "Album": {
+        "properties": {
+          "rating": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "rating"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "in": "header",
+        "name": "apikey",
+        "type": "apiKey"
+      },
+      "jwt_token": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Test OpenAPI spec for loco-openapi",
+    "license": {
+      "identifier": "MIT OR Apache-2.0",
+      "name": "MIT OR Apache-2.0"
+    },
+    "title": "Loco Demo Test",
+    "version": "*.*.*"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/album/get_album": {
+      "get": {
+        "description": "Returns a title and rating",
+        "operationId": "get_album",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Album"
+                }
+              }
+            },
+            "description": "Album found"
+          }
+        },
+        "summary": "Get album",
+        "tags": [
+          "album"
+        ]
+      }
+    }
+  }
+}
