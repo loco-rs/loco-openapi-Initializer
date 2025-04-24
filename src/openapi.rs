@@ -15,6 +15,12 @@ pub fn add_route(route: OpenApiRouter<AppContext>) {
     }
 }
 
+pub fn clear_routes() {
+    if let Ok(mut routes) = get_routes().lock() {
+        routes.clear();
+    }
+}
+
 // Get a merged router containing all collected routes
 #[must_use]
 pub fn get_merged_router() -> OpenApiRouter<AppContext> {
@@ -26,6 +32,7 @@ pub fn get_merged_router() -> OpenApiRouter<AppContext> {
         }
     }
 
+    clear_routes();
     result
 }
 
