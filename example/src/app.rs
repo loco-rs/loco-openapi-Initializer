@@ -42,34 +42,26 @@ impl Hooks for App {
         create_app::<Self, Migrator>(mode, environment, config).await
     }
 
-    async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
-        let mut initializers: Vec<Box<dyn Initializer>> = vec![];
-
-        if ctx.environment != Environment::Test {
-            initializers.push(
-                Box::new(
-                    loco_openapi::OpenapiInitializerWithSetup::new(
-                        |ctx| {
-                            #[derive(OpenApi)]
-                            #[openapi(
+    async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+        Ok(vec![Box::new(
+            loco_openapi::OpenapiInitializerWithSetup::new(
+                |ctx| {
+                    #[derive(OpenApi)]
+                    #[openapi(
                                 modifiers(&SecurityAddon),
                                 info(
                                     title = "Loco Demo",
                                     description = "This app is a kitchensink for various capabilities and examples of the [Loco](https://loco.rs) project."
                                 )
                             )]
-                            struct ApiDoc;
-                            set_jwt_location(ctx.into());
+                    struct ApiDoc;
+                    set_jwt_location(ctx.into());
 
-                            ApiDoc::openapi()
-                        },
-                        None,
-                    ),
-                ) as Box<dyn Initializer>
-            );
-        }
-
-        Ok(initializers)
+                    ApiDoc::openapi()
+                },
+                None,
+            ),
+        )])
     }
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
