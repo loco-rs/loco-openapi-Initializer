@@ -9,7 +9,7 @@ info:
   license:
     name: MIT OR Apache-2.0
     identifier: MIT OR Apache-2.0
-  version: "*.*.*"
+  version: "[version]"
 paths:
   /api/album/get_album:
     get:

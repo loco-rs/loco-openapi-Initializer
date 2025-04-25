@@ -19,7 +19,7 @@ use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use utoipa::{OpenApi, ToSchema}; // Added ToSchema
                                  // Define a minimal TestApp
-use insta::{assert_debug_snapshot, assert_json_snapshot, assert_yaml_snapshot};
+use insta::{assert_json_snapshot, assert_snapshot, assert_yaml_snapshot, with_settings};
 struct TestApp;
 
 // --- Start: Embedded Album Controller ---
@@ -204,53 +204,19 @@ async fn test_openapi_ui_endpoints(#[case] endpoint: &str) {
         let content_type = res.headers().get("content-type").unwrap().to_str().unwrap();
         match content_type {
             "text/html" | "text/html; charset=utf-8" => {
-                assert_debug_snapshot!(
-                    format!("[{endpoint}]"),
-                    (
-                        res.status_code(),
-                        res.text()
-                            .lines()
-                            .find(|line| line.contains("<title>"))
-                            .and_then(|line| {
-                                line.split("<title>").nth(1)?.split("</title>").next()
-                            })
-                            .unwrap_or_default()
-                            .to_string(),
-                    )
-                );
+                with_settings!({filters => vec![
+                    (r#"("version":\s*")\d+\.\d+\.\d+"#, "$1[version]"),
+                ]}, {
+                    assert_snapshot!(format!("[{endpoint}]"), res.text());
+                });
             }
             "application/json" => {
-                let mut json_value = res.json::<serde_json::Value>();
-                if let Some(info) = json_value
-                    .as_object_mut()
-                    .and_then(|obj| obj.get_mut("info"))
-                {
-                    if let Some(obj) = info.as_object_mut() {
-                        obj.insert(
-                            "version".to_string(),
-                            serde_json::Value::String("*.*.*".to_string()),
-                        );
-                    }
-                }
-
-                assert_json_snapshot!(format!("[{endpoint}]"), json_value)
+                let json_value = res.json::<serde_json::Value>();
+                assert_json_snapshot!(format!("[{endpoint}]"), json_value, {".info.version" => "[version]"});
             }
             "application/yaml" => {
-                let mut yaml_value =
-                    serde_yaml::from_str::<serde_yaml::Value>(&res.text()).unwrap();
-                if let Some(info) = yaml_value
-                    .as_mapping_mut()
-                    .and_then(|map| map.get_mut("info"))
-                {
-                    if let Some(map) = info.as_mapping_mut() {
-                        map.insert(
-                            serde_yaml::Value::String("version".to_string()),
-                            serde_yaml::Value::String("*.*.*".to_string()),
-                        );
-                    }
-                }
-
-                assert_yaml_snapshot!(format!("[{endpoint}]"), yaml_value)
+                let yaml_value = serde_yaml::from_str::<serde_yaml::Value>(&res.text()).unwrap();
+                assert_yaml_snapshot!(format!("[{endpoint}]"), yaml_value, {".info.version" => "[version]"});
             }
             _ => panic!("Invalid content type {}", content_type),
         }

@@ -43,7 +43,7 @@ expression: json_value
       "name": "MIT OR Apache-2.0"
     },
     "title": "Loco Demo Test",
-    "version": "*.*.*"
+    "version": "[version]"
   },
   "openapi": "3.1.0",
   "paths": {
