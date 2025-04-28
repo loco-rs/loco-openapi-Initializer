@@ -1,4 +1,5 @@
 # `loco-openapi-initializer`
+
 This crate adds OpenAPI support to Loco by using a initializer.
 
 The Loco OpenAPI integration is generated using [`Utoipa`](https://github.com/juhaku/utoipa)
@@ -6,25 +7,30 @@ The Loco OpenAPI integration is generated using [`Utoipa`](https://github.com/ju
 # Installation
 
 ## `Cargo.toml`
+
 Edit your `Cargo.toml` file
 
 Add the `loco-openapi` initializer, with one or multiple of the following features flags:
+
 - `swagger`
 - `redoc`
 - `scalar`
 - `full`
 
 ### Example
+
 ```toml
 # Cargo.toml
 [dependencies]
 loco-openapi = { version = "*", features = [
     "full",
-], git = "https://github.com/loco-rs/loco-openapi-Initializer", branch = "master" }
+], git = "https://github.com/loco-rs/loco-openapi-Initializer", branch = "main" }
 ```
 
 ## Configuration
+
 Add the corresponding OpenAPI visualizer to the config file
+
 ```yaml
 # config/*.yaml
 #...
@@ -45,7 +51,9 @@ initializers:
 ```
 
 ## Adding the OpenAPI initializer
+
 In the initializer you can modify the OpenAPI spec before the routes are added, allowing you to edit [`openapi::info`](https://docs.rs/utoipa/latest/utoipa/openapi/info/struct.Info.html)
+
 ```rust
 // src/app.rs
 use loco_openapi::prelude::*;
@@ -76,6 +84,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
 # Usage
 
 ## Generating the OpenAPI spec
+
 Only routes that are annotated with [`utoipa::path`](https://docs.rs/utoipa/latest/utoipa/attr.path.html) will be included in the OpenAPI spec.
 
 ```rust
@@ -99,9 +108,10 @@ async fn get_action_openapi() -> Result<Response> {
 }
 ```
 
-
 ### `#[derive(ToSchema)]`
+
 Make sure to add `#[derive(ToSchema)]` on any struct that included in [`utoipa::path`](https://docs.rs/utoipa/latest/utoipa/attr.path.html).
+
 ```rust
 use loco_openapi::prelude::*;
 
@@ -113,7 +123,8 @@ pub struct Album {
 ```
 
 ## Automatically adding routes to the OpenAPI spec visualizer
-Swap the `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, UtoipaMethodRouter<AppContext>) `
+
+Swap the `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, UtoipaMethodRouter<AppContext>)`
 
 ```diff
 + use loco_openapi::prelude::*;
@@ -124,6 +135,7 @@ Swap the `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, Uto
 ```
 
 ## Manualy adding routes to the OpenAPI spec visualizer
+
 Create a function that returns `OpenApiRouter<AppContext>`
 
 ```rust
@@ -141,6 +153,7 @@ pub fn api_routes() -> OpenApiRouter<AppContext> {
 ```
 
 Then in the initializer, create a `Vec<OpenApiRouter<AppContext>>`
+
 ```rust
 use loco_openapi::prelude::*;
 
@@ -157,17 +170,21 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
 ```
 
 ## Note: do not add multiple routes inside the `routes!` macro
+
 ```rust
 routes!(get_action_1_do_not_do_this, get_action_2_do_not_do_this))
 ```
 
 ### Security Documentation
+
 If `modifiers(&SecurityAddon)` is set in `inital_openapi_spec`, you can document the per route security in `utoipa::path`:
+
 - `security(("jwt_token" = []))`
 - `security(("api_key" = []))`
 - or leave blank to remove security from the route `security(())`
 
 Example:
+
 ```rust
 use loco_openapi::prelude::*;
 
@@ -182,9 +199,11 @@ use loco_openapi::prelude::*;
 ```
 
 # Available Endpoints
+
 After running `cargo loco start` the OpenAPI visualizers are available at the following URLs by default:
-- http://localhost:5150/redoc
-- http://localhost:5150/scalar
-- http://localhost:5150/swagger
+
+- <http://localhost:5150/redoc>
+- <http://localhost:5150/scalar>
+- <http://localhost:5150/swagger>
 
 To customize the OpenAPI visualizers URLs,and endpoint paths for json and yaml, see `config/*.yaml`.
