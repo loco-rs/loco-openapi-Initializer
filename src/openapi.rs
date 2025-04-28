@@ -33,8 +33,6 @@ pub fn get_merged_router() -> OpenApiRouter<AppContext> {
             result = result.merge(route.clone());
         }
     }
-
-    clear_routes();
     result
 }
 

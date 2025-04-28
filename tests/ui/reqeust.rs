@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use loco_openapi::openapi::clear_routes;
 use loco_openapi::prelude::routes;
 use loco_openapi::{
     auth::{set_jwt_location, SecurityAddon},
@@ -222,4 +223,5 @@ async fn test_openapi_ui_endpoints(#[case] endpoint: &str) {
         }
     })
     .await;
+    clear_routes();
 }
