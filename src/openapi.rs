@@ -15,6 +15,8 @@ pub fn add_route(route: OpenApiRouter<AppContext>) {
     }
 }
 
+// Clears all registered routes in the `OPENAPI_ROUTES`
+// Mostly used for testing, to prevent routes added from different test runs from overlapping
 pub fn clear_routes() {
     if let Ok(mut routes) = get_routes().lock() {
         routes.clear();
