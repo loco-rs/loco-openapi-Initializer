@@ -207,3 +207,30 @@ After running `cargo loco start` the OpenAPI visualizers are available at the fo
 - <http://localhost:5150/swagger>
 
 To customize the OpenAPI visualizers URLs,and endpoint paths for json and yaml, see `config/*.yaml`.
+
+# Testing with `loco-openapi-initializer` installed
+
+Because of global shared state issues when using automatic schema collection, it's recommended to disable the `loco-openapi-initializer` when running tests in your application.
+
+```rust
+async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+    let mut initializers: Vec<Box<dyn Initializer>> = vec![];
+
+    if ctx.environment != Environment::Test {
+        initializers.push(
+            Box::new(
+                loco_openapi::OpenapiInitializerWithSetup::new(
+                    |ctx| {
+                        // ...
+                    },
+                    None,
+                ),
+            ) as Box<dyn Initializer>
+        );
+    }
+
+    Ok(initializers)
+}
+```
+
+Alternatively you could use (`cargo nextest`)[https://nexte.st/]. This issue is not relevant when using the `loco-openapi-initializer` for normal use.
