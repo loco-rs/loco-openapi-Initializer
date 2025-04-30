@@ -75,7 +75,11 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
 
                 ApiDoc::openapi()
             },
-            Some(vec![controllers::album::api_routes()]),
+            // When using automatic schema collection only
+            None,
+            // When using manual schema collection
+            // Manual schema collection can also be used at the same time as automatic schema collection
+            // Some(vec![controllers::album::api_routes()]),
         ),
     )])
 }
@@ -134,6 +138,23 @@ Swap the `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, Uto
 +     .add("/get_album", openapi(get(get_album), routes!(get_album))),
 ```
 
+In the initializer, if you are only using automatic schema collection, set the second arg to `None`, to disable manual schema collection
+
+```rust
+use loco_openapi::prelude::*;
+
+async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+    Ok(vec![Box::new(
+        loco_openapi::OpenapiInitializerWithSetup::new(
+            |ctx| {
+                // ...
+            },
+            None,
+        ),
+    )])
+}
+```
+
 ## Manualy adding routes to the OpenAPI spec visualizer
 
 Create a function that returns `OpenApiRouter<AppContext>`
@@ -163,6 +184,46 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
             |ctx| {
                 // ...
             },
+            Some(vec![controllers::album::api_routes()]),
+        ),
+    )])
+}
+```
+
+## Using both manual and automatic schema collection
+
+It's possible to use both manual and automatic schema collection at the same time. But make sure to only add each route once.
+
+Using both of the examples above, at the same time will not work, since the route `/get_album` will be added twice.
+
+```rust
+// controllers
+use loco_openapi::prelude::*;
+
+pub fn routes() -> Routes {
+    Routes::new()
+        .prefix("api/album/")
+        // automatic schema collection of `/get_album` is here
+        .add("/get_album", openapi(get(get_album), routes!(get_album))),
+}
+
+pub fn api_routes() -> OpenApiRouter<AppContext> {
+    // OpenApiRouter for manual schema collection of `/get_album` is created here
+    OpenApiRouter::new().routes(routes!(get_album))
+}
+```
+
+```rust
+// initializers
+use loco_openapi::prelude::*;
+
+async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
+    Ok(vec![Box::new(
+        loco_openapi::OpenapiInitializerWithSetup::new(
+            |ctx| {
+                // ...
+            },
+            // manual schema collection is added to the OpenAPI spec here
             Some(vec![controllers::album::api_routes()]),
         ),
     )])
