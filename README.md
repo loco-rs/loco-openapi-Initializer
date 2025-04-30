@@ -17,10 +17,16 @@ Add the `loco-openapi` initializer, with one or multiple of the following featur
 - `scalar`
 - `full`
 
+Temporarily (before loco 15.1):
+Change the loco-rs to the master branch.
+
 ### Example
 
 ```toml
 # Cargo.toml
+[workspace.dependencies]
+loco-rs = { git = "https://github.com/loco-rs/loco" }
+
 [dependencies]
 loco-openapi = { version = "*", features = [
     "full",
@@ -57,27 +63,34 @@ In the initializer you can modify the OpenAPI spec before the routes are added, 
 ```rust
 // src/app.rs
 use loco_openapi::prelude::*;
-
 async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
-    Ok(vec![Box::new(
-        loco_openapi::OpenapiInitializerWithSetup::new(
-            |ctx| {
-                #[derive(OpenApi)]
-                #[openapi(
-                    modifiers(&SecurityAddon),
-                    info(
-                        title = "Loco Demo",
-                        description = "This app is a kitchensink for various capabilities and examples of the [Loco](https://loco.rs) project."
-                    )
-                )]
-                struct ApiDoc;
-                set_jwt_location_ctx(ctx);
+    let mut initializers: Vec<Box<dyn Initializer>> = vec![];
 
-                ApiDoc::openapi()
-            },
-            Some(vec![controllers::album::api_routes()]),
-        ),
-    )])
+    if ctx.environment != Environment::Test {
+        initializers.push(
+            Box::new(
+                loco_openapi::OpenapiInitializerWithSetup::new(
+                    |ctx| {
+                        #[derive(OpenApi)]
+                        #[openapi(
+                            modifiers(&SecurityAddon),
+                            info(
+                                title = "Loco Demo",
+                                description = "This app is a kitchensink for various capabilities and examples of the [Loco](https://loco.rs) project."
+                            )
+                        )]
+                        struct ApiDoc;
+                        set_jwt_location(ctx.into());
+
+                        ApiDoc::openapi()
+                    },
+                    None,
+                ),
+            ) as Box<dyn Initializer>
+        );
+    }
+
+    Ok(initializers)
 }
 ```
 
