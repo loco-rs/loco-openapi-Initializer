@@ -46,18 +46,16 @@ pub fn get_openapi_config() -> Option<&'static OpenAPIConfig> {
 /// `OpenAPI` configuration
 /// Example:
 /// ```yaml
-/// openapi:
-///   redoc:
+/// initializers:
+///   openapi:
 ///     redoc:
 ///       url: /redoc
 ///       # spec_json_url: /redoc/openapi.json
 ///       # spec_yaml_url: /redoc/openapi.yaml
-///   scalar:
 ///     scalar:
 ///       url: /scalar
 ///       # spec_json_url: /scalar/openapi.json
 ///       # spec_yaml_url: /scalar/openapi.yaml
-///   swagger:
 ///     swagger:
 ///       url: /swagger
 ///       spec_json_url: /api-docs/openapi.json
@@ -69,33 +67,36 @@ pub struct OpenAPIConfig {
     /// Redoc configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   redoc:
+    /// initializers:
+    ///   openapi:
     ///     redoc:
     ///       url: /redoc
     /// ```
     #[cfg(feature = "redoc")]
+    #[serde(flatten)]
     pub redoc: Option<OpenAPIType>,
     /// Scalar configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   scalar:
+    /// initializers:
+    ///   openapi:
     ///     scalar:
     ///       url: /scalar
     /// ```
     #[cfg(feature = "scalar")]
+    #[serde(flatten)]
     pub scalar: Option<OpenAPIType>,
     /// Swagger configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   swagger:
+    /// initializers:
+    ///   openapi:
     ///     swagger:
     ///       url: /swagger
     ///       spec_json_url: /openapi.json
     /// ```
     #[cfg(feature = "swagger")]
+    #[serde(flatten)]
     pub swagger: Option<OpenAPIType>,
 }
 
@@ -106,8 +107,8 @@ pub enum OpenAPIType {
     /// Redoc configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   redoc:
+    /// initializers:
+    ///   openapi:
     ///     redoc:
     ///       url: /redoc
     /// ```
@@ -124,8 +125,8 @@ pub enum OpenAPIType {
     /// Scalar configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   scalar:
+    /// initializers:
+    ///   openapi:
     ///     scalar:
     ///       url: /scalar
     /// ```
@@ -142,8 +143,8 @@ pub enum OpenAPIType {
     /// Swagger configuration
     /// Example:
     /// ```yaml
-    /// openapi:
-    ///   swagger:
+    /// initializers:
+    ///   openapi:
     ///     swagger:
     ///       url: /swagger
     ///       spec_json_url: /openapi.json
@@ -181,10 +182,8 @@ mod tests {
             openapi_config.insert(
                 "swagger".to_string(),
                 json!({
-                    "swagger": {
-                        "url": "/swagger",
-                        "spec_json_url": "/api-docs/openapi.json"
-                    }
+                    "url": "/swagger",
+                    "spec_json_url": "/api-docs/openapi.json"
                 }),
             );
         }
@@ -195,11 +194,9 @@ mod tests {
             openapi_config.insert(
                 "redoc".to_string(),
                 json!({
-                    "redoc": {
-                        "url": "/redoc",
-                        "spec_json_url": "/redoc/openapi.json",
-                        "spec_yaml_url": "/redoc/openapi.yaml"
-                    }
+                    "url": "/redoc",
+                    "spec_json_url": "/redoc/openapi.json",
+                    "spec_yaml_url": "/redoc/openapi.yaml"
                 }),
             );
         }
@@ -210,11 +207,9 @@ mod tests {
             openapi_config.insert(
                 "scalar".to_string(),
                 json!({
-                    "scalar": {
-                        "url": "/scalar",
-                        "spec_json_url": "/scalar/openapi.json",
-                        "spec_yaml_url": "/scalar/openapi.yaml"
-                    }
+                    "url": "/scalar",
+                    "spec_json_url": "/scalar/openapi.json",
+                    "spec_yaml_url": "/scalar/openapi.yaml"
                 }),
             );
         }

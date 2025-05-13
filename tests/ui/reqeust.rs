@@ -72,31 +72,25 @@ fn config_test() -> Config {
     openapi_conf.insert(
         "redoc".to_string(),
         json!({
-            "redoc": {
-                "url": "/redoc",
-                "spec_json_url": "/redoc/openapi.json",
-                "spec_yaml_url": "/redoc/openapi.yaml"
-            }
+            "url": "/redoc",
+            "spec_json_url": "/redoc/openapi.json",
+            "spec_yaml_url": "/redoc/openapi.yaml"
         }),
     );
     openapi_conf.insert(
         "scalar".to_string(),
         json!({
-            "scalar": {
-                "url": "/scalar",
-                "spec_json_url": "/scalar/openapi.json",
-                "spec_yaml_url": "/scalar/openapi.yaml"
-            }
+            "url": "/scalar",
+            "spec_json_url": "/scalar/openapi.json",
+            "spec_yaml_url": "/scalar/openapi.yaml"
         }),
     );
     openapi_conf.insert(
         "swagger".to_string(),
         json!({
-            "swagger": {
-                "url": "/swagger", // Ensure this matches the test URL
-                "spec_json_url": "/swagger/openapi.json", // Required for swagger
-                "spec_yaml_url": "/swagger/openapi.yaml"
-            }
+            "url": "/swagger", // Ensure this matches the test URL
+            "spec_json_url": "/swagger/openapi.json", // Required for swagger
+            "spec_yaml_url": "/swagger/openapi.yaml"
         }),
     );
 
