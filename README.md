@@ -37,17 +37,20 @@ Add the corresponding OpenAPI visualizer to the config file
 initializers:
   openapi:
     redoc:
-      url: /redoc
-      # spec_json_url: /redoc/openapi.json
-      # spec_yaml_url: /redoc/openapi.yaml
+      redoc:
+        url: /redoc
+        # spec_json_url: /scalar/openapi.json
+        # spec_yaml_url: /scalar/openapi.yaml
     scalar:
-      url: /scalar
-      # spec_json_url: /scalar/openapi.json
-      # spec_yaml_url: /scalar/openapi.yaml
+      scalar:
+        url: /scalar
+        # spec_json_url: /redoc/openapi.json
+        # spec_yaml_url: /redoc/openapi.yaml
     swagger:
-      url: /swagger
-      spec_json_url: /api-docs/openapi.json # spec_json_url is required for swagger-ui
-      # spec_yaml_url: /api-docs/openapi.yaml
+      swagger:
+        url: /swagger
+        spec_json_url: /api-docs/openapi.json
+        # spec_yaml_url: /api-docs/openapi.yaml
 ```
 
 ## Adding the OpenAPI initializer
