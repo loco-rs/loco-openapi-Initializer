@@ -71,7 +71,7 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
                     )
                 )]
                 struct ApiDoc;
-                set_jwt_location_ctx(ctx);
+                set_jwt_location(ctx.into());
 
                 ApiDoc::openapi()
             },
@@ -99,7 +99,7 @@ use loco_openapi::prelude::*;
 /// Your Description here
 #[utoipa::path(
     get,
-    path = "/album",
+    path = "/api/album/get_album",
     responses(
         (status = 200, description = "Album found", body = Album),
     ),
@@ -128,13 +128,14 @@ pub struct Album {
 
 ## Automatically adding routes to the OpenAPI spec visualizer
 
-Swap the `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, UtoipaMethodRouter<AppContext>)`
+Swap `axum::routing::MethodRouter` to `openapi(MethodRouter<AppContext>, UtoipaMethodRouter<AppContext>)`
 
 ```diff
 + use loco_openapi::prelude::*;
 
   Routes::new()
--     .add("/album", get(get_album)),
+      .prefix("api/album/")
+-     .add("/get_album", get(get_album)),
 +     .add("/get_album", openapi(get(get_album), routes!(get_album))),
 ```
 
@@ -153,6 +154,12 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
         ),
     )])
 }
+```
+
+### Note: do not add multiple routes inside the `routes!` macro
+
+```rust
+.add("/get_album", openapi(get(get_album), routes!(get_action_1_do_not_do_this, get_action_2_do_not_do_this))),
 ```
 
 ## Manualy adding routes to the OpenAPI spec visualizer
@@ -230,19 +237,17 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
 }
 ```
 
-## Note: do not add multiple routes inside the `routes!` macro
-
-```rust
-routes!(get_action_1_do_not_do_this, get_action_2_do_not_do_this))
-```
-
 ### Security Documentation
 
-If `modifiers(&SecurityAddon)` is set in `inital_openapi_spec`, you can document the per route security in `utoipa::path`:
+If `modifiers(&SecurityAddon)` is set in `inital_openapi_spec`, you can document the per route security in `utoipa::path` by setting the [`SecurityRequirement`](https://docs.rs/utoipa/latest/utoipa/openapi/security/struct.SecurityRequirement.html):
 
 - `security(("jwt_token" = []))`
 - `security(("api_key" = []))`
-- or leave blank to remove security from the route `security(())`
+
+To remove security from the route:
+
+- remove `security` from `utoipa::path`
+- or leave empty `security(())`
 
 Example:
 
@@ -251,7 +256,7 @@ use loco_openapi::prelude::*;
 
 #[utoipa::path(
     get,
-    path = "/album",
+    path = "/api/album/get_album",
     security(("jwt_token" = [])),
     responses(
         (status = 200, description = "Album found", body = Album),
@@ -294,4 +299,4 @@ async fn initializers(ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
 }
 ```
 
-Alternatively you could use (`cargo nextest`)[https://nexte.st/]. This issue is not relevant when using the `loco-openapi-initializer` for normal use.
+Alternatively you could use [`cargo nextest`](https://nexte.st/). This issue is not relevant when using the `loco-openapi-initializer` for normal use.
