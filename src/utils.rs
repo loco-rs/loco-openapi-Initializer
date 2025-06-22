@@ -33,7 +33,10 @@ pub async fn openapi_spec_json() -> Result<Response> {
 /// Currently this function doesn't return any error. this is for feature
 /// functionality
 pub async fn openapi_spec_yaml() -> Result<Response> {
-    format::yaml(&get_openapi_spec().to_yaml()?)
+    let yaml = get_openapi_spec()
+        .to_yaml()
+        .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?;
+    format::yaml(&yaml)
 }
 
 /// Adds the `OpenAPI` endpoints the app router
