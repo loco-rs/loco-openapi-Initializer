@@ -35,7 +35,7 @@ pub async fn openapi_spec_json() -> Result<Response> {
 pub async fn openapi_spec_yaml() -> Result<Response> {
     let yaml = get_openapi_spec()
         .to_yaml()
-        .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?;
+        .map_err(|e| loco_rs::Error::Any(Box::new(e)))?;
     format::yaml(&yaml)
 }
 
