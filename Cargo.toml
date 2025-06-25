@@ -17,7 +17,8 @@ scalar = ["dep:utoipa-scalar"]
 
 
 [workspace.dependencies]
-loco-rs = { git = "https://github.com/loco-rs/loco", default-features = false }
+# loco-rs = { git = "https://github.com/loco-rs/loco", default-features = false }
+loco-rs = { version = "0.16", default-features = false }
 
 [dependencies]
 loco-rs = { workspace = true }
