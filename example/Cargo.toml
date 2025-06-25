@@ -11,7 +11,7 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace.dependencies]
-loco-rs = { git = "https://github.com/loco-rs/loco" }
+loco-rs = { version = "0.16" }
 
 [dependencies]
 loco-openapi = { path = "../", features = ["full"] }
