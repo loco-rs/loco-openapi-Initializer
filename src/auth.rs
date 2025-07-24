@@ -28,6 +28,18 @@ impl From<&LocoJWTLocation> for JWTLocation {
     }
 }
 
+// Support conversion from JWTLocationConfig (Single/Multiple) to JWTLocation
+impl From<&loco_rs::config::JWTLocationConfig> for JWTLocation {
+    fn from(cfg: &loco_rs::config::JWTLocationConfig) -> Self {
+        match cfg {
+            loco_rs::config::JWTLocationConfig::Single(loc) => Self::from(loc),
+            loco_rs::config::JWTLocationConfig::Multiple(locs) => {
+                locs.first().map_or(Self::Bearer, Self::from)
+            }
+        }
+    }
+}
+
 // Direct conversion from AppContext to JWTLocation for ease of use
 impl From<&AppContext> for JWTLocation {
     fn from(ctx: &AppContext) -> Self {
@@ -36,7 +48,7 @@ impl From<&AppContext> for JWTLocation {
             .as_ref()
             .and_then(|auth| auth.jwt.as_ref())
             .and_then(|jwt| jwt.location.as_ref())
-            .map_or(Self::Bearer, std::convert::Into::into)
+            .map_or(Self::Bearer, Self::from)
     }
 }
 
