@@ -1,4 +1,5 @@
 # `loco-openapi-initializer`
+[![crate](https://img.shields.io/crates/v/loco-openapi.svg)](https://crates.io/crates/loco-openapi)
 
 This crate adds OpenAPI support to Loco by using a initializer.
 
@@ -22,9 +23,7 @@ Add the `loco-openapi` initializer, with one or multiple of the following featur
 ```toml
 # Cargo.toml
 [dependencies]
-loco-openapi = { version = "*", features = [
-    "full",
-], git = "https://github.com/loco-rs/loco-openapi-Initializer", branch = "main" }
+loco-openapi = { version = "0.1", features = ["full"] }
 ```
 
 ## Configuration
